@@ -130,6 +130,7 @@ app.use('/api/recentemente-vistos', require('./src/routes/recentemente-visto.rou
 app.use('/api/carrinho', require('./src/routes/carrinho.routes'));
 app.use('/api/preferencias', require('./src/routes/preferencia.routes'));
 app.use('/api/entregas', require('./src/routes/entrega.routes'));
+app.use('/api/push', require('./src/routes/push.routes'));
 
 // Health check
 app.get('/api/saude', (req, res) => {

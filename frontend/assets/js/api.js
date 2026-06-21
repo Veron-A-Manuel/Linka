@@ -762,6 +762,18 @@ const api = {
         async actualizarLocalizacao(id, latitude, longitude) {
             return await api.pedido(`/entregas/${id}/localizacao`, 'PUT', { latitude, longitude });
         }
+    },
+
+    push: {
+        async obterChavePublica() {
+            return await api.pedido('/push/vapid-public-key');
+        },
+        async subscrever(subscription) {
+            return await api.pedido('/push/subscrever', 'POST', { subscription });
+        },
+        async cancelar(endpoint) {
+            return await api.pedido('/push/cancelar', 'POST', { endpoint });
+        }
     }
 };
 

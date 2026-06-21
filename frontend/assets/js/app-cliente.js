@@ -206,6 +206,41 @@
     function desconectarSocket() { if (socket) { socket.disconnect(); socket = null; } }
     function limparSessaoLocal() { localStorage.removeItem('linka_token'); desconectarSocket(); }
 
+    // ── Push Notifications ──
+    async function subscreverPush() {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+        try {
+            const reg = await navigator.serviceWorker.register('/frontend/sw.js');
+            const permissao = await Notification.requestPermission();
+            if (permissao !== 'granted') return;
+
+            const res = await window.api.push.obterChavePublica();
+            const chave = res.dados?.chave;
+            if (!chave) return;
+
+            const sub = await reg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(chave)
+            });
+
+            await window.api.push.subscrever(sub.toJSON());
+            console.log('[Push] Subscrito com sucesso');
+        } catch (e) {
+            console.warn('[Push] Erro ao subscrever:', e.message);
+        }
+    }
+
+    function urlBase64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; i++) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
     // ── Notificações (Bell) ──
     window.carregarNotificacoes = async function () {
         try {
@@ -225,7 +260,7 @@
         try {
             const res = await window.api.utilizadores.perfil();
             if (res.sucesso && res.dados.tipo === 'cliente') {
-                utilizadorLogado = res.dados; conectarSocket(); atualizarInterfaceAutenticada();
+                utilizadorLogado = res.dados; conectarSocket(); atualizarInterfaceAutenticada(); subscreverPush();
             } else { window.location.href = '../index.html'; }
         } catch (e) {
             if (e._abortado) return;
