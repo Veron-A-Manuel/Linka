@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linka — Marketplace Local Moçambique</title>
+    <meta name="description" content="Linka é um marketplace local em Moçambique para comprar, vender e negociar com segurança.">
+    <meta property="og:title" content="Linka — Marketplace Local Moçambique">
+    <meta property="og:description" content="Compre, venda e negocie localmente com total segurança.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Linka — Marketplace Local Moçambique">
+    <meta name="twitter:description" content="Compre, venda e negocie localmente com total segurança.">
+    
+    <!-- Favicon Textual -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22sans-serif%22 font-weight=%22bold%22 fill=%22%23004643%22>L</text></svg>">
+    
+    <!-- Google Fonts: Plus Jakarta Sans & Material Symbols (Stitch Design System) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/estilo.css">
+</head>
+<body>
+    <!-- Splash Screen (Stitch) -->
+    <div id="splashScreen" style="position:fixed;inset:0;background:var(--background);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999;transition:opacity 0.3s;">
+        <div style="font-size:2.5rem;font-weight:900;color:var(--primary);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-1px;">LINKA.</div>
+        <div class="spinner-linka" style="margin-top:24px;width:32px;height:32px;border-width:3px;"></div>
+        <p style="margin-top:16px;color:var(--on-surface-variant);font-size:0.88rem;">A carregar...</p>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <h1 class="logo-texto" id="btnLogo">LINKA.</h1>
+            </div>
+            
+            <div class="navbar-pesquisa" id="navbarPesquisa">
+                <div class="busca-container">
+                    <input type="text" class="input-busca-global" placeholder="Pesquisar produtos...">
+                    <button class="btn btn-primario"><span class="material-symbols-outlined">search</span></button>
+                </div>
+            </div>
+
+
+            <div class="auth-buttons" id="navAuth">
+                <!-- Preenchido via JS: Botão Entrar ou Menu Utilizador -->
+                <button class="btn btn-primario" id="btnAbrirLogin">Entrar</button>
+            </div>
+            
+            <button class="menu-hamburger" id="btnMenuHamburger" aria-label="Menu">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Seção Hero (Stitch — Premium Hero) -->
+    <main>
+        <!-- Secção Hero Moderna -->
+        <section id="hero" class="hero-section app-hero">
+            <div class="hero-conteudo">
+                <h2 class="hero-titulo">Renove o seu estilo e a sua casa com o <span class="hero-destaque">Linka.</span></h2>
+                <p class="hero-subtitulo">Compre, venda e negocie localmente com total segurança. O marketplace que une Moçambique.</p>
+                <div class="hero-botoes">
+                    <button class="btn btn-primario btn-hero" id="btnExplorar">Ver Ofertas <span class="material-symbols-outlined" style="font-size:1.1rem;margin-left:6px;">arrow_forward</span></button>
+                    <button class="btn btn-secundario btn-hero" onclick="window.abrirRegistoCliente ? window.abrirRegistoCliente() : document.getElementById('modalAuth').classList.add('active')">Criar Conta</button>
+                </div>
+            </div>
+            <div class="hero-imagem">
+                <div class="hero-carousel" id="heroCarousel">
+                    <div class="carousel-slides" id="carouselSlides">
+                        <!-- Preenchido via JS com produtos trending -->
+                        <div class="carousel-slide carousel-active carousel-skeleton">
+                            <div class="skeleton" style="width:100%;height:100%;border-radius:20px;"></div>
+                        </div>
+                    </div>
+                    <button class="carousel-seta carousel-seta-esq" id="carouselPrev" aria-label="Anterior">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </button>
+                    <button class="carousel-seta carousel-seta-dir" id="carouselNext" aria-label="Próximo">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </button>
+                    <div class="carousel-dots" id="carouselDots"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categorias Rápidas (Stitch — Category Chips) -->
+        <section class="secao-categorias container">
+            <div class="sec-titulo-app">
+                <h2>Categorias Rápidas</h2>
+                <a href="paginas/cliente.html" class="link-destaque-app">Ver todas</a>
+            </div>
+            <div class="categorias-grid-app" id="categoriasGridApp">
+                <div class="cat-card-app">
+                    <div class="cat-icon-app"><span class="material-symbols-outlined">devices</span></div>
+                    <span>Eletrônicos</span>
+                </div>
+                <div class="cat-card-app">
+                    <div class="cat-icon-app"><span class="material-symbols-outlined">cleaning_services</span></div>
+                    <span>Limpeza</span>
+                </div>
+                <div class="cat-card-app">
+                    <div class="cat-icon-app"><span class="material-symbols-outlined">business_center</span></div>
+                    <span>Consultoria</span>
+                </div>
+                <div class="cat-card-app">
+                    <div class="cat-icon-app"><span class="material-symbols-outlined">handyman</span></div>
+                    <span>Reformas</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Secção de Produtos (Home/Publico) -->
+        <section id="produtos" class="secao-produtos">
+            <div class="container">
+                <div class="sec-titulo-app">
+                    <h2>Para Você</h2>
+                </div>
+                <div id="filtros">
+                    <!-- Filtros por categoria virão aqui -->
+                </div>
+                <div class="grid-produtos" id="gridProdutos">
+                    <p class="text-center">A carregar produtos...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Como Funciona (Stitch) -->
+        <section class="secao-como-funciona container">
+            <div class="sec-titulo-app text-center">
+                <h2>Como Funciona?</h2>
+                <p>Três passos simples para começar a negociar.</p>
+            </div>
+            <div class="passos-grid">
+                <div class="passo-card">
+                    <div class="passo-icon"><span class="material-symbols-outlined">person_add</span></div>
+                    <h3>1. Crie Conta</h3>
+                    <p>Registe-se gratuitamente em segundos.</p>
+                </div>
+                <div class="passo-card">
+                    <div class="passo-icon"><span class="material-symbols-outlined">search</span></div>
+                    <h3>2. Explore</h3>
+                    <p>Encontre os melhores produtos e serviços locais.</p>
+                </div>
+                <div class="passo-card">
+                    <div class="passo-icon"><span class="material-symbols-outlined">handshake</span></div>
+                    <h3>3. Negocie</h3>
+                    <p>Feche negócio diretamente pelo nosso chat seguro.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Planos Premium -->
+        <section class="secao-planos container mt-20" style="margin-top: 40px;">
+            <div class="sec-titulo-app text-center">
+                <h2>Planos para Vendedores</h2>
+                <p>Escolha o plano ideal para impulsionar as suas vendas.</p>
+            </div>
+            <div class="planos-grid" id="gridPlanos" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                <p class="text-center w-100" style="grid-column: 1/-1;">A carregar planos...</p>
+            </div>
+        </section>
+
+        <!-- Newsletter / Comunidade (Stitch — Dark Banner) -->
+        <section class="secao-comunidade container">
+            <div class="comunidade-banner">
+                <div class="comunidade-texto">
+                    <h2>Junte-se à nossa comunidade</h2>
+                    <p>Receba curadorias exclusivas e ofertas antecipadas toda semana.</p>
+                </div>
+                <form class="comunidade-form" id="formNewsletter">
+                    <input type="email" placeholder="Seu e-mail" required id="inputNewsletter">
+                    <button type="submit" class="btn btn-verde-app">Assinar</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Minimalista (Stitch — Dark Theme) -->
+    <footer class="footer-main">
+        <h2 class="footer-logo">LINKA.</h2>
+        <p style="color:var(--outline);font-size:0.88rem;">&copy; 2026 Linka Marketplace — Moçambique. Todos os direitos reservados.</p>
+        <div style="display:flex;gap:20px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+            <a href="termos.html" style="color:var(--outline);text-decoration:none;font-size:0.85rem;">Termos e Condições</a>
+            <a href="privacidade.html" style="color:var(--outline);text-decoration:none;font-size:0.85rem;">Privacidade</a>
+            <a href="cookies.html" style="color:var(--outline);text-decoration:none;font-size:0.85rem;">Cookies</a>
+        </div>
+    </footer>
+
+    <!-- MODAL: LOGIN / CADASTRO -->
+    <div class="modal-overlay" id="modalAuth">
+        <div class="modal-container">
+            <button class="btn-fechar-modal" aria-label="Fechar" onclick="this.closest('.modal-overlay').classList.remove('active')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div id="modalHeader" class="text-center mb-20">
+                <h2 id="modalTitulo">Bem-vindo de volta</h2>
+                <p id="modalSubtitulo">Introduza os seus dados para entrar.</p>
+            </div>
+
+            <form id="formLogin">
+                <div class="campo-grupo">
+                    <label>Email ou Telefone</label>
+                    <input type="text" placeholder="ex: veron@linka.com" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Palavra-passe</label>
+                    <div class="campo-senha-wrapper">
+                        <input type="password" id="loginSenha" placeholder="••••••••" required>
+                        <span class="material-symbols-outlined toggle-senha" data-target="loginSenha">visibility</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primario btn-bloco">Entrar</button>
+                <p class="text-center mt-20 texto-alternativo">
+                    Não tem conta? <span class="pointer hero-destaque link-destaque" id="linkIrParaRegisto">Registe-se aqui</span>
+                </p>
+            </form>
+
+            <form id="formRegisto" class="escondido">
+                <div class="campo-grupo">
+                    <label>Nome Completo</label>
+                    <input type="text" id="regNome" placeholder="Como devemos chamar-lhe?" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="seu@email.com" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Telefone</label>
+                    <input type="tel" id="regTelefone" placeholder="ex: 84 000 0000" required>
+                </div>
+                <div class="campo-grupo">
+                    <label>Palavra-passe</label>
+                    <div class="campo-senha-wrapper">
+                        <input type="password" id="regSenha" placeholder="Mínimo 6 caracteres" required>
+                        <span class="material-symbols-outlined toggle-senha" data-target="regSenha">visibility</span>
+                    </div>
+                    <div class="medidor-container">
+                        <div id="barraForca" class="medidor-barra"></div>
+                    </div>
+                    <small id="textoForca" class="medidor-texto">Força da palavra-passe</small>
+                </div>
+                <div class="campo-grupo">
+                    <label>Confirmar Palavra-passe</label>
+                    <div class="campo-senha-wrapper">
+                        <input type="password" id="regConfirmaSenha" placeholder="Repita a palavra-passe" required>
+                        <span class="material-symbols-outlined toggle-senha" data-target="regConfirmaSenha">visibility</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primario btn-bloco">Criar Conta</button>
+                <p class="text-center mt-20 texto-alternativo">
+                    Já tem conta? <span class="pointer hero-destaque link-destaque" id="linkIrParaLogin">Faça login</span>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: DETALHES DO PRODUTO -->
+    <div class="modal-overlay" id="modalDetalhes">
+        <div class="modal-container modal-detalhes-conteudo">
+            <button class="btn-fechar-modal" aria-label="Fechar" onclick="this.closest('.modal-overlay').classList.remove('active')">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div id="conteudoDetalhes">
+                <!-- Preenchido via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splashScreen');
+            if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 300); }
+        });
+    </script>
+</body>
+</html>

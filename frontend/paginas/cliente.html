@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#004643">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Linka — Marketplace</title>
+    <meta name="description" content="Explore, compre e negocie produtos locais no Linka.">
+    <meta property="og:title" content="Linka — Marketplace">
+    <meta property="og:description" content="Explore, compre e negocie produtos locais no Linka.">
+    <meta property="og:type" content="website">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22sans-serif%22 font-weight=%22bold%22 fill=%22%23004643%22>L</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
+    <link rel="stylesheet" href="../assets/css/dashboard-layout.css">
+</head>
+
+<body class="bg-branco app-shell">
+
+    <!-- Header (Stitch — TopAppBar) -->
+    <header class="header lk-header">
+        <div class="lk-header-left">
+            <button class="hamburger-btn" data-drawer-toggle><span class="material-symbols-outlined">menu</span></button>
+            <div class="lk-header-logo">LINKA.</div>
+        </div>
+        <div class="header-icons">
+            <div class="hicon notif-wrapper" onclick="window.carregarNotificacoes()" style="cursor:pointer;">
+                <span class="material-symbols-outlined">notifications</span>
+                <div class="hbadge" id="notifBadge" style="display:none;">0</div>
+            </div>
+            <div class="header-avatar" id="headerAvatar" data-tab="perfil" style="cursor:pointer;">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay e Drawer Menu -->
+    <div class="drawer-overlay" id="drawerOverlay" style="display:none;" data-drawer-toggle></div>
+    <aside class="sidebar-drawer" id="mobileDrawer">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <div class="logo">LINKA.</div>
+                <div class="drawer-close" data-drawer-toggle><span class="material-symbols-outlined">close</span></div>
+            </div>
+            <div class="drawer-perfil" data-tab="perfil">
+                <div class="drawer-av" id="drawer-avatar"><span class="material-symbols-outlined">person</span></div>
+                <div>
+                    <div class="drawer-perfil-nome" id="drawer-nome">Conta Linka</div>
+                    <div class="drawer-perfil-tag" id="drawer-tag">Cliente</div>
+                </div>
+            </div>
+
+            <div class="menu-section">Explorar</div>
+            <div class="menu-item ativo" data-tab="inicio"><span class="material-symbols-outlined">home</span> Início</div>
+            <div class="menu-item" data-tab="explorar"><span class="material-symbols-outlined">explore</span> Explorar</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('ranking');fecharDrawerCliente()"><span class="material-symbols-outlined">leaderboard</span> Ranking de Vendedores</div>
+            <div class="menu-item" data-tab="favoritos"><span class="material-symbols-outlined">favorite</span> Favoritos</div>
+            <div class="menu-item" data-tab="mensagens"><span class="material-symbols-outlined">chat</span> Mensagens</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('vistos-recentemente');fecharDrawerCliente()"><span class="material-symbols-outlined">history</span> Vistos Recente.</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('carrinho');fecharDrawerCliente()"><span class="material-symbols-outlined">shopping_cart</span> Carrinho</div>
+            <div class="menu-item menu-item-carrinho" data-tab="carrinho">
+                <span class="material-symbols-outlined">receipt_long</span> Os Meus Pedidos
+            </div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('entregas');fecharDrawerCliente()"><span class="material-symbols-outlined">local_shipping</span> Entregas</div>
+
+            <div class="menu-section">A Minha Conta</div>
+            <div class="menu-item" data-tab="perfil"><span class="material-symbols-outlined">person</span> Perfil</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('preferencias');fecharDrawerCliente()"><span class="material-symbols-outlined">settings</span> Preferências</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('minhas-denuncias');fecharDrawerCliente()"><span class="material-symbols-outlined">flag</span> Minhas Denúncias</div>
+            <div class="menu-item" onclick="window.carregarConteudoDashboard('minhas-sancoes');fecharDrawerCliente()"><span class="material-symbols-outlined">shield</span> Minhas Sanções</div>
+
+            <div class="menu-item sair" data-logout><span class="material-symbols-outlined">logout</span> Sair</div>
+        </div>
+    </aside>
+
+    <main class="pagina lk-pagina">
+
+        <!-- SECÇÃO: INÍCIO (Marketplace) -->
+        <section id="homeCliente" class="secao ativo">
+
+            <!-- Search Bar -->
+            <div class="lk-search lk-search-with-btn">
+                <div class="lk-search-input-wrap">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="O que você está procurando?" id="appSearchInput">
+                </div>
+                <button class="lk-search-btn" onclick="window.executarBusca()">
+                    Buscar
+                </button>
+            </div>
+
+            <!-- Category Pills -->
+            <div class="lk-pills-scroll">
+                <div class="lk-pills" id="lkCategoryPills">
+                    <button class="lk-pill ativo" data-cat="all">All Items</button>
+                </div>
+            </div>
+
+            <!-- Featured Banner -->
+            <div class="lk-banner" id="lkBanner">
+                <div class="lk-banner-content">
+                    <span class="lk-banner-badge">NEW ARRIVAL</span>
+                    <h2 class="lk-banner-title">A carregar...</h2>
+                    <div class="lk-banner-price"></div>
+                    <button class="lk-banner-btn" onclick="document.getElementById('lkBanner')?.querySelector('a')?.click()">Shop Now</button>
+                </div>
+            </div>
+
+            <!-- For You -->
+            <div class="lk-section-header">
+                <h3 class="lk-section-title">For You</h3>
+                <a href="#" class="lk-section-link" onclick="event.preventDefault(); window.switchTabCliente('explorar');">View All</a>
+            </div>
+
+            <div class="lk-products-grid" id="gridProdutosCliente">
+                <div class="lk-product-card"><div class="lk-product-img skeleton"></div><div class="lk-product-info"><div class="skeleton" style="width:60%;height:12px;border-radius:4px;"></div><div class="skeleton" style="width:80%;height:14px;border-radius:4px;margin-top:6px;"></div><div class="skeleton" style="width:40%;height:16px;border-radius:4px;margin-top:6px;"></div></div></div>
+                <div class="lk-product-card"><div class="lk-product-img skeleton"></div><div class="lk-product-info"><div class="skeleton" style="width:60%;height:12px;border-radius:4px;"></div><div class="skeleton" style="width:80%;height:14px;border-radius:4px;margin-top:6px;"></div><div class="skeleton" style="width:40%;height:16px;border-radius:4px;margin-top:6px;"></div></div></div>
+                <div class="lk-product-card"><div class="lk-product-img skeleton"></div><div class="lk-product-info"><div class="skeleton" style="width:60%;height:12px;border-radius:4px;"></div><div class="skeleton" style="width:80%;height:14px;border-radius:4px;margin-top:6px;"></div><div class="skeleton" style="width:40%;height:16px;border-radius:4px;margin-top:6px;"></div></div></div>
+                <div class="lk-product-card"><div class="lk-product-img skeleton"></div><div class="lk-product-info"><div class="skeleton" style="width:60%;height:12px;border-radius:4px;"></div><div class="skeleton" style="width:80%;height:14px;border-radius:4px;margin-top:6px;"></div><div class="skeleton" style="width:40%;height:16px;border-radius:4px;margin-top:6px;"></div></div></div>
+            </div>
+
+        </section>
+
+        <!-- SECÇÃO: FEED REELS (TikTok/Instagram Style) -->
+        <section id="feedSection" class="secao escondido lk-reels-section">
+            <header class="lk-reels-topbar">
+                <div class="lk-reels-topbar-left">
+                    <h1 class="lk-reels-brand">LINKA</h1>
+                    <div class="lk-reels-tabs">
+                        <span class="lk-reels-tab ativo">Para você</span>
+                    </div>
+                </div>
+                <div class="lk-reels-topbar-right">
+                    <span class="material-symbols-outlined lk-reels-topbar-icon" onclick="window.switchTabCliente('explorar')">search</span>
+                </div>
+            </header>
+            <div class="lk-reels-snap-container" id="lkFeedContainer">
+                <div class="lk-reels-loading"><div class="spinner-linka"></div></div>
+            </div>
+            <!-- Bottom Nav inside Reels (FAB Style) -->
+            <nav class="lk-reels-bottom-nav">
+                <div class="lk-reels-nav-item" onclick="window.switchTabCliente('inicio')">
+                    <span class="material-symbols-outlined">home</span>
+                    <span>Home</span>
+                </div>
+                <div class="lk-reels-nav-item ativo" onclick="window.switchTabCliente('explorar')">
+                    <span class="material-symbols-outlined">search</span>
+                    <span>Explorar</span>
+                </div>
+                <div class="lk-reels-nav-item lk-reels-fab-wrap">
+                    <button class="lk-reels-fab-btn" onclick="window.switchTabCliente('feed')">
+                        <span class="material-symbols-outlined">add</span>
+                    </button>
+                </div>
+                <div class="lk-reels-nav-item" onclick="window.switchTabCliente('mensagens')">
+                    <span class="material-symbols-outlined">chat</span>
+                    <span>Chat</span>
+                </div>
+                <div class="lk-reels-nav-item" onclick="window.switchTabCliente('favoritos')">
+                    <span class="material-symbols-outlined">favorite</span>
+                    <span>Favoritos</span>
+                </div>
+            </nav>
+        </section>
+
+        <!-- SECÇÃO: EXPLORAR / FEED SOCIAL (Instagram Bento Grid) -->
+        <section id="galeriaSection" class="secao escondido lk-explore-section">
+            <!-- Sticky Search + Chips -->
+            <div class="lk-explore-sticky-bar">
+                <div class="lk-explore-search-bar">
+                    <span class="material-symbols-outlined lk-explore-search-icon">search</span>
+                    <input type="text" placeholder="Explore o mundo LINKA" id="lkExploreSearch">
+                    <span class="material-symbols-outlined lk-explore-header-icon" onclick="window.notificar('Filtros: breve disponível!', 'info')">tune</span>
+                </div>
+                <div class="lk-explore-chips" id="lkExplorePills">
+                    <button class="lk-explore-chip ativo" data-feed="all">Para Ti</button>
+                    <button class="lk-explore-chip" data-feed="trending">Tendências</button>
+                    <button class="lk-explore-chip" data-feed="alta">Em Alta</button>
+                    <button class="lk-explore-chip" data-feed="videos">Vídeos</button>
+                    <button class="lk-explore-chip" data-feed="ranking" onclick="window.carregarConteudoDashboard('ranking')">Ranking</button>
+                    <button class="lk-explore-chip" data-feed="fashion">Moda</button>
+                    <button class="lk-explore-chip" data-feed="electronics">Electrónica</button>
+                </div>
+            </div>
+            <!-- Bento Grid -->
+            <div class="lk-bento-grid" id="lkMasonryGrid"></div>
+        </section>
+
+        <!-- SECÇÃO: VIEWER FULL-SCREEN (Stitch — Instagram Reels) -->
+        <section id="lkViewer" class="secao escondido lk-viewer">
+            <div class="lk-viewer-slide" id="lkViewerSlide">
+                <!-- Preenchido via JS -->
+            </div>
+            <!-- Close button -->
+            <button class="lk-viewer-close" onclick="window.fecharViewer()"><span class="material-symbols-outlined">close</span></button>
+        </section>
+
+        <!-- SECÇÃO: CHAT / CONVERSAS (WhatsApp Style) -->
+        <section id="chatSection" class="secao escondido lk-chat-standalone">
+            <!-- Topbar (lista de conversas) -->
+            <header class="lk-chat-topbar" id="chatTopbar">
+                <div class="lk-chat-topbar-left">
+                    <div>
+                        <p class="lk-chat-topbar-label">LINKA</p>
+                        <h1 class="lk-chat-topbar-title" id="chatTopbarTitle">Conversas</h1>
+                    </div>
+                </div>
+                <div class="lk-chat-topbar-right">
+                    <span class="material-symbols-outlined lk-chat-topbar-icon" onclick="window.toggleChatSearch()">search</span>
+                    <span class="material-symbols-outlined lk-chat-topbar-icon" onclick="window.notificar('Opções: em breve!', 'info')">more_vert</span>
+                </div>
+            </header>
+            <div class="lk-chat-search-bar escondido" id="chatSearchBar">
+                <span class="material-symbols-outlined lk-chat-search-icon">search</span>
+                <input type="text" placeholder="Pesquisar conversas..." id="chatSearchInput" oninput="window.filtrarConversasChat(this.value)">
+                <span class="material-symbols-outlined lk-chat-search-close" onclick="window.toggleChatSearch()">close</span>
+            </div>
+            <!-- Lista de conversas -->
+            <main class="lk-chat-main">
+                <div id="listaConversas" class="lk-chat-list">
+                    <div class="stitch-empty-state"><div class="stitch-empty-icon-wrap"><span class="material-symbols-outlined">chat_bubble_outline</span></div><h3>Sem conversas</h3><p>Clique num produto para negociar!</p></div>
+                </div>
+                <button class="lk-chat-fab" onclick="window.notificar('Inicie uma conversa a partir de um produto!', 'info')">
+                    <span class="material-symbols-outlined">chat</span>
+                </button>
+            </main>
+            <!-- Janela de conversa (preenchida via JS) -->
+            <div class="lk-chat-window" id="janelaChatStitch">
+                <div class="lk-chat-window-empty"><span class="material-symbols-outlined">forum</span><p>Selecione uma conversa</p></div>
+            </div>
+        </section>
+
+        <!-- Dashboard (conteúdo dinâmico) -->
+        <section id="dashboard" class="secao escondido">
+            <div class="dashboard-grid">
+                <aside class="dashboard-sidebar" id="dashboardSidebar" style="display:none;"></aside>
+                <div class="dashboard-conteudo" id="dashboardConteudo"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation (Stitch — FAB Style) -->
+    <nav class="bottom-nav lk-bottom-nav" id="bottomNavGlobal">
+        <div class="lk-nav-item ativo" data-tab="inicio">
+            <span class="material-symbols-outlined">home</span>
+            <span>Home</span>
+        </div>
+        <div class="lk-nav-item" data-tab="explorar">
+            <span class="material-symbols-outlined">search</span>
+            <span>Explorar</span>
+        </div>
+        <div class="lk-nav-item lk-nav-fab-wrap">
+            <button class="lk-nav-fab-btn" onclick="window.switchTabCliente('feed')">
+                <span class="material-symbols-outlined">add</span>
+            </button>
+        </div>
+        <div class="lk-nav-item" data-tab="mensagens">
+            <span class="material-symbols-outlined">chat</span>
+            <span>Chat</span>
+        </div>
+        <div class="lk-nav-item" data-tab="favoritos">
+            <span class="material-symbols-outlined">favorite</span>
+            <span>Favoritos</span>
+        </div>
+    </nav>
+
+    <!-- MODAL: DETALHES DO PRODUTO -->
+    <div class="modal-overlay" id="modalDetalhes">
+        <div class="modal-container modal-detalhes-conteudo">
+            <div id="conteudoDetalhes"></div>
+        </div>
+    </div>
+
+    <!-- BOTTOM SHEET: COMENTÁRIOS -->
+    <div class="lk-comments-overlay" id="lkCommentsOverlay">
+        <div class="lk-comments-backdrop" onclick="window.fecharComentarios()"></div>
+        <section class="lk-comments-sheet" id="lkCommentsSheet">
+            <div class="lk-comments-handle"></div>
+            <header class="lk-comments-header">
+                <div class="lk-comments-header-left">
+                    <h1 class="lk-comments-title">Comentários</h1>
+                    <span class="lk-comments-count" id="lkCommentsCount">0 comentários</span>
+                </div>
+                <button class="lk-comments-close" onclick="window.fecharComentarios()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </header>
+            <div class="lk-comments-list" id="lkCommentsList">
+                <div class="lk-comments-empty">
+                    <span class="material-symbols-outlined">chat_bubble_outline</span>
+                    <p>Seja o primeiro a comentar!</p>
+                </div>
+            </div>
+            <footer class="lk-comments-footer">
+                <div class="lk-comments-emoji-bar">
+                    <button class="lk-comments-emoji" data-emoji="❤️">❤️</button>
+                    <button class="lk-comments-emoji" data-emoji="🙌">🙌</button>
+                    <button class="lk-comments-emoji" data-emoji="🔥">🔥</button>
+                    <button class="lk-comments-emoji" data-emoji="👏">👏</button>
+                    <button class="lk-comments-emoji" data-emoji="😢">😢</button>
+                    <button class="lk-comments-emoji" data-emoji="😍">😍</button>
+                    <button class="lk-comments-emoji" data-emoji="😮">😮</button>
+                    <button class="lk-comments-emoji" data-emoji="😂">😂</button>
+                </div>
+                <div class="lk-comments-input-row">
+                    <div class="lk-comments-user-avatar" id="lkCommentsAvatar">U</div>
+                    <div class="lk-comments-input-wrap">
+                        <input type="text" id="lkCommentsInput" placeholder="Adicione um comentário..." autocomplete="off">
+                        <button class="lk-comments-send-btn" id="lkCommentsSendBtn">
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </div>
+            </footer>
+        </section>
+    </div>
+
+    <!-- Toast -->
+    <div id="toastContainer" style="position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/feed-cache.js"></script>
+    <script src="../assets/js/app-cliente.js"></script>
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            if (drawer.style.display === 'block' || drawer.classList.contains('open')) {
+                drawer.style.display = 'none';
+                drawer.classList.remove('open');
+                overlay.style.display = 'none';
+            } else {
+                drawer.style.display = 'block';
+                drawer.classList.add('open');
+                overlay.style.display = 'block';
+            }
+        }
+        function switchTab(tabId, event) {
+            if (window.switchTabCliente) {
+                window.switchTabCliente(tabId, event?.currentTarget || null);
+                return;
+            }
+            if (tabId === 'post') tabId = 'feed';
+            if (tabId === 'inicio') {
+                document.getElementById('dashboard').classList.add('escondido');
+                if (document.getElementById('feedSection')) document.getElementById('feedSection').classList.add('escondido');
+                if (document.getElementById('galeriaSection')) document.getElementById('galeriaSection').classList.add('escondido');
+                document.getElementById('homeCliente').classList.remove('escondido');
+            } else if (tabId === 'feed') {
+                document.getElementById('dashboard').classList.add('escondido');
+                document.getElementById('homeCliente').classList.add('escondido');
+                if (document.getElementById('galeriaSection')) document.getElementById('galeriaSection').classList.add('escondido');
+                if (document.getElementById('feedSection')) document.getElementById('feedSection').classList.remove('escondido');
+            } else if (tabId === 'explorar') {
+                document.getElementById('dashboard').classList.add('escondido');
+                document.getElementById('homeCliente').classList.add('escondido');
+                if (document.getElementById('feedSection')) document.getElementById('feedSection').classList.add('escondido');
+                if (document.getElementById('galeriaSection')) document.getElementById('galeriaSection').classList.remove('escondido');
+            } else {
+                document.getElementById('homeCliente').classList.add('escondido');
+                if (document.getElementById('feedSection')) document.getElementById('feedSection').classList.add('escondido');
+                if (document.getElementById('galeriaSection')) document.getElementById('galeriaSection').classList.add('escondido');
+                document.getElementById('dashboard').classList.remove('escondido');
+                if (window.carregarConteudoDashboard) {
+                    window.carregarConteudoDashboard(tabId === 'pesquisa' ? 'compras' : (tabId === 'perfil' ? 'meu-perfil' : tabId));
+                }
+            }
+            document.querySelectorAll('.lk-nav-item, .nav-item-app, .nav-item-post').forEach(btn => btn.classList.remove('ativo'));
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
+            if (event && event.currentTarget) {
+                const target = event.currentTarget;
+                if (target.classList.contains('lk-nav-item') || target.classList.contains('nav-item-app') || target.classList.contains('nav-item-post') || target.classList.contains('menu-item')) {
+                    target.classList.add('ativo');
+                }
+            }
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            if (window.innerWidth <= 768 && mobileDrawer && (mobileDrawer.style.display === 'block' || mobileDrawer.classList.contains('open'))) {
+                toggleDrawer();
+            }
+        }
+    </script>
+</body>
+
+</html>

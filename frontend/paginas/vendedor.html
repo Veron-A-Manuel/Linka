@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Vendedor — Linka</title>
+    <meta name="description" content="Painel de vendedor do marketplace Linka.">
+    <meta property="og:title" content="Painel do Vendedor — Linka">
+    <meta property="og:description" content="Gerencie os seus anúncios, vendas e contactos no Linka.">
+    <meta property="og:type" content="website">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 font-family=%22sans-serif%22 font-weight=%22bold%22 fill=%22%23004643%22>L</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/estilo.css">
+    <link rel="stylesheet" href="../assets/css/dashboard-layout.css">
+</head>
+<body class="bg-branco">
+
+    <!-- Header Fixo Mobile/Desktop (Stitch) -->
+    <header class="header">
+        <button class="hamburger-btn" onclick="toggleDrawer()"><span class="material-symbols-outlined">menu</span></button>
+        <div class="logo" style="cursor:pointer;" onclick="window.location.href='vendedor.html'">LINKA.</div>
+
+        <div class="header-icons">
+            <div class="hicon notif-wrapper" onclick="window.carregarNotificacoes()" style="cursor:pointer;">
+                <span class="material-symbols-outlined">notifications</span>
+                <div class="hbadge" id="notifBadge" style="display:none;">0</div>
+            </div>
+
+            <div class="header-avatar" id="navAuth" style="cursor:pointer;">
+                <span class="material-symbols-outlined">person</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Overlay e Drawer Menu (Mobile) -->
+    <div class="drawer-overlay" id="drawerOverlay" style="display:none;" onclick="toggleDrawer()"></div>
+    <aside class="sidebar-drawer" id="mobileDrawer">
+        <div class="drawer-content">
+            <div class="drawer-header">
+                <div class="logo">LINKA.</div>
+                <div class="drawer-close" onclick="toggleDrawer()"><span class="material-symbols-outlined">close</span></div>
+            </div>
+            <div class="drawer-perfil" onclick="switchTab('dashboard', event)">
+                <div class="drawer-av" id="drawer-avatar"><span class="material-symbols-outlined">store</span></div>
+                <div>
+                    <div class="drawer-perfil-nome" id="drawer-nome">Conta Linka</div>
+                    <div class="drawer-perfil-tag" id="drawer-tag">Vendedor</div>
+                </div>
+            </div>
+
+            <div class="menu-section">Gestão</div>
+            <div class="menu-item ativo" onclick="switchTab('dashboard', event)"><span class="material-symbols-outlined">dashboard</span> Painel</div>
+            <div class="menu-item" onclick="switchTab('anuncios', event)"><span class="material-symbols-outlined">inventory_2</span> Os Meus Anúncios</div>
+            <div class="menu-item" onclick="switchTab('criar', event)"><span class="material-symbols-outlined">add_circle</span> Novo Anúncio</div>
+            <div class="menu-item" onclick="switchTab('vendas', event)"><span class="material-symbols-outlined">receipt_long</span> Minhas Vendas</div>
+            <div class="menu-item" onclick="switchTab('mensagens', event)"><span class="material-symbols-outlined">chat</span> Mensagens</div>
+            <div class="menu-item" onclick="switchTab('analytics', event)"><span class="material-symbols-outlined">analytics</span> Analytics</div>
+            <div class="menu-item" onclick="switchTab('anuncios-patrocinados', event)"><span class="material-symbols-outlined">campaign</span> Anúncios</div>
+            <div class="menu-item" onclick="switchTab('ranking', event)"><span class="material-symbols-outlined">leaderboard</span> Ranking</div>
+            <div class="menu-item" onclick="switchTab('entregas', event)"><span class="material-symbols-outlined">local_shipping</span> Entregas</div>
+
+            <div class="menu-section">A Minha Loja</div>
+            <div class="menu-item" onclick="switchTab('perfil', event)"><span class="material-symbols-outlined">storefront</span> Perfil da Loja</div>
+            <div class="menu-item" onclick="switchTab('subscricao', event)"><span class="material-symbols-outlined">workspace_premium</span> Minha Subscrição</div>
+            <div class="menu-item" onclick="switchTab('sancoes', event)"><span class="material-symbols-outlined">shield</span> Minhas Sanções</div>
+
+            <div class="menu-item sair" data-logout><span class="material-symbols-outlined">logout</span> Sair</div>
+        </div>
+    </aside>
+
+    <main class="pagina">
+
+        <!-- O Vendedor entra directamente no Dashboard de Gestão -->
+        <section id="dashboard" class="secao ativo">
+            <div class="dashboard-grid">
+                <aside class="dashboard-sidebar" id="dashboardSidebar" style="display:none;"></aside>
+                <div class="dashboard-conteudo" id="dashboardConteudo">
+                    <!-- Conteúdo de Gestão — Preenchido via JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation App-Like (Stitch) -->
+    <nav class="bottom-nav" id="bottomNavGlobal">
+        <div class="nav-btn ativo" id="btnNavPainel" onclick="switchTab('dashboard', event)">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>Painel</span>
+        </div>
+        <div class="nav-btn" id="btnNavAnuncios" onclick="switchTab('anuncios', event)">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span>Anúncios</span>
+        </div>
+        <div class="nav-btn" id="btnNavCriar" onclick="switchTab('criar', event)" style="color:var(--primary);">
+            <span class="material-symbols-outlined" style="font-size:2rem;">add_circle</span>
+            <span>Criar</span>
+        </div>
+        <div class="nav-btn" id="btnNavMensagens" onclick="switchTab('mensagens', event)">
+            <span class="material-symbols-outlined">chat</span>
+            <span>Mensagens</span>
+        </div>
+        <div class="nav-btn" id="btnNavLoja" onclick="switchTab('perfil', event)">
+            <span class="material-symbols-outlined">storefront</span>
+            <span>Loja</span>
+        </div>
+    </nav>
+
+    <!-- MODAL: DETALHES DO PRODUTO -->
+    <div class="modal-overlay" id="modalDetalhes">
+        <div class="modal-container modal-detalhes-conteudo">
+            <div id="conteudoDetalhes"></div>
+        </div>
+    </div>
+
+    <!-- Toast de Notificações -->
+    <div id="toastContainer" style="position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/api.js"></script>
+    <script src="../assets/js/app-vendedor.js"></script>
+    <script>
+        function toggleDrawer() {
+            const drawer = document.getElementById('mobileDrawer');
+            const overlay = document.getElementById('drawerOverlay');
+            if (drawer.style.display === 'block' || drawer.classList.contains('open')) {
+                drawer.style.display = 'none';
+                drawer.classList.remove('open');
+                overlay.style.display = 'none';
+            } else {
+                drawer.style.display = 'block';
+                drawer.classList.add('open');
+                overlay.style.display = 'block';
+            }
+        }
+
+        const TAB_MAP = {
+            'dashboard': 'vendedor-inicio',
+            'anuncios': 'meus-anuncios',
+            'criar': 'criar-anuncio',
+            'vendas': 'vendas',
+            'mensagens': 'mensagens',
+            'analytics': 'analytics',
+            'anuncios-patrocinados': 'anuncios-patrocinados',
+            'ranking': 'ranking',
+            'entregas': 'entregas',
+            'perfil': 'meu-perfil',
+            'subscricao': 'minha-subscricao',
+            'sancoes': 'minhas-sancoes'
+        };
+
+        const NAV_BTN_MAP = {
+            'dashboard': 'btnNavPainel',
+            'anuncios': 'btnNavAnuncios',
+            'criar': 'btnNavCriar',
+            'vendas': null,
+            'mensagens': 'btnNavMensagens',
+            'perfil': 'btnNavLoja'
+        };
+
+        function switchTab(tabId, event) {
+            const vista = TAB_MAP[tabId] || tabId;
+            if (window.carregarConteudoDashboard) {
+                window.carregarConteudoDashboard(vista);
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('ativo'));
+            const btnId = NAV_BTN_MAP[tabId];
+            if (btnId) {
+                const btn = document.getElementById(btnId);
+                if (btn) btn.classList.add('ativo');
+            }
+
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
+            if (event && event.currentTarget) {
+                const target = event.currentTarget;
+                if (target && target.classList.contains('menu-item')) {
+                    target.classList.add('ativo');
+                }
+            }
+
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            if (window.innerWidth <= 768 && mobileDrawer && mobileDrawer.classList.contains('open')) {
+                toggleDrawer();
+            }
+        }
+    </script>
+</body>
+
+</html>
