@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/estilo.css">
     <link rel="stylesheet" href="../assets/css/dashboard-layout.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body class="bg-branco app-shell">
@@ -89,14 +90,29 @@
         <section id="homeCliente" class="secao ativo">
 
             <!-- Search Bar -->
-            <div class="lk-search lk-search-with-btn">
+            <div class="lk-search lk-search-with-btn" id="lkSearchWrapper">
                 <div class="lk-search-input-wrap">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" placeholder="O que você está procurando?" id="appSearchInput">
+                    <input type="text" placeholder="O que você está procurando?" id="appSearchInput" autocomplete="off">
+                    <span class="material-symbols-outlined lk-search-clear" id="lkSearchClear" style="display:none;cursor:pointer;font-size:20px;">close</span>
                 </div>
                 <button class="lk-search-btn" onclick="window.executarBusca()">
                     Buscar
                 </button>
+                <!-- Live Search Dropdown -->
+                <div class="lk-search-dropdown" id="lkSearchDropdown">
+                    <div class="lk-sd-section" id="lkSdCategories">
+                        <div class="lk-sd-title">Categorias</div>
+                        <div class="lk-sd-list" id="lkSdCatList"></div>
+                    </div>
+                    <div class="lk-sd-section" id="lkSdProducts">
+                        <div class="lk-sd-title">Produtos</div>
+                        <div class="lk-sd-list" id="lkSdProdList"></div>
+                    </div>
+                    <div class="lk-sd-footer" id="lkSdFooter" style="display:none;">
+                        <button onclick="window.executarBusca()">Ver todos os resultados</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Category Pills -->

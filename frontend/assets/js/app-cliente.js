@@ -355,20 +355,20 @@
 
     // ── Home: Categorias (Pills) ──
     async function carregarCategoriasFeed() {
-        const pills = get('lkCategoryPills'); if (!pills) return;
+        const $pills = $('#lkCategoryPills');
+        if (!$pills.length) return;
         try {
             const res = await window.api.categorias.listar();
             const cats = res.dados || [];
-            pills.innerHTML = `<button class="lk-pill ativo" data-cat="all">All Items</button>` +
-                cats.map(c => `<button class="lk-pill" data-cat="${c.id}">${escaparHtml(c.nome)}</button>`).join('');
-            pills.querySelectorAll('.lk-pill').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    pills.querySelectorAll('.lk-pill').forEach(b => b.classList.remove('ativo'));
-                    btn.classList.add('ativo');
-                    const catId = btn.dataset.cat;
-                    if (catId === 'all') carregarProdutosFeed(true);
-                    else window.filtrarPorCategoria(catId);
-                });
+            $pills.html(`<button class="lk-pill ativo" data-cat="all">All Items</button>` +
+                cats.map(c => `<button class="lk-pill" data-cat="${c.id}">${escaparHtml(c.nome)}</button>`).join(''));
+
+            $pills.off('click', '.lk-pill').on('click', '.lk-pill', function() {
+                $pills.find('.lk-pill').removeClass('ativo');
+                $(this).addClass('ativo');
+                const catId = $(this).data('cat');
+                if (catId === 'all') carregarProdutosFeed(true);
+                else window.filtrarPorCategoria(catId);
             });
         } catch { /* silent */ }
     }
@@ -394,10 +394,173 @@
     };
     window.executarBusca = window.executarPesquisa;
 
-    const appSearchInput = get('appSearchInput');
-    if (appSearchInput) {
-        appSearchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') window.executarPesquisa(); });
-    }
+    // ── Live Search com jQuery ──
+    (function initLiveSearch() {
+        const $input = $('#appSearchInput');
+        const $dropdown = $('#lkSearchDropdown');
+        const $catList = $('#lkSdCatList');
+        const $prodList = $('#lkSdProdList');
+        const $sdCategories = $('#lkSdCategories');
+        const $sdProducts = $('#lkSdProducts');
+        const $footer = $('#lkSdFooter');
+        const $clear = $('#lkSearchClear');
+        if (!$input.length || !$dropdown.length) return;
+
+        let categoriasCache = null;
+        let debounceTimer = null;
+        let activeIndex = -1;
+
+        // Carregar categorias uma vez
+        function carregarCategorias() {
+            if (categoriasCache) return Promise.resolve(categoriasCache);
+            return $.get(`${API_BASE_URL}/explore/categorias`).then(r => {
+                categoriasCache = r.dados || [];
+                return categoriasCache;
+            }).catch(() => []);
+        }
+
+        function renderizarCategorias(termo) {
+            if (!categoriasCache) return;
+            const t = termo.toLowerCase();
+            const filtradas = t
+                ? categoriasCache.filter(c => c.nome.toLowerCase().includes(t)).slice(0, 5)
+                : categoriasCache.slice(0, 5);
+
+            if (filtradas.length === 0) { $sdCategories.hide(); return; }
+
+            $sdCategories.show();
+            $catList.html(filtradas.map(c => `
+                <div class="lk-sd-item" data-cat-id="${c.id}" data-cat-slug="${c.slug}">
+                    <div class="lk-sd-item-icon"><span class="material-symbols-outlined">${c.icone || 'category'}</span></div>
+                    <div class="lk-sd-item-info">
+                        <div class="lk-sd-item-name">${escaparHtml(c.nome)}</div>
+                        <div class="lk-sd-item-meta">${c.total_produtos || 0} produtos</div>
+                    </div>
+                </div>`).join(''));
+        }
+
+        function renderizarProdutos(produtos) {
+            if (!produtos || produtos.length === 0) { $sdProducts.hide(); return; }
+            $sdProducts.show();
+            $prodList.html(produtos.map(p => {
+                const img = p.imagem_url ? resolverUrlImagem(p.imagem_url) : '';
+                const preco = p.preco ? `MZN ${formatarDinheiro(p.preco)}` : '';
+                return `<div class="lk-sd-item" data-prod-id="${p.id}">
+                    ${img ? `<img class="lk-sd-item-img" src="${img}" alt="">` : '<div class="lk-sd-item-icon"><span class="material-symbols-outlined">inventory_2</span></div>'}
+                    <div class="lk-sd-item-info">
+                        <div class="lk-sd-item-name">${escaparHtml(p.titulo)}</div>
+                        <div class="lk-sd-item-meta">${escaparHtml(p.cidade || '')}</div>
+                    </div>
+                    <div class="lk-sd-item-price">${preco}</div>
+                </div>`;
+            }).join(''));
+        }
+
+        function abrirDropdown() { $dropdown.addClass('ativo'); $clear.show(); }
+        function fecharDropdown() { $dropdown.removeClass('ativo'); activeIndex = -1; }
+
+        // Evento de input — live search
+        $input.on('input', function() {
+            const termo = $(this).val().trim();
+            clearTimeout(debounceTimer);
+
+            if (termo.length === 0) {
+                fecharDropdown();
+                $clear.hide();
+                return;
+            }
+
+            abrirDropdown();
+
+            // Renderizar categorias imediatamente (do cache)
+            renderizarCategorias(termo);
+
+            // Debounce para produtos (300ms)
+            debounceTimer = setTimeout(function() {
+                if (termo.length < 2) { $sdProducts.hide(); $footer.hide(); return; }
+
+                $.get(`${API_BASE_URL}/explore/busca?termo=${encodeURIComponent(termo)}&limite=5`)
+                    .then(r => {
+                        const prods = r.dados || [];
+                        renderizarProdutos(prods);
+                        $footer.toggle(prods.length >= 5);
+                    })
+                    .catch(() => { $sdProducts.hide(); });
+            }, 300);
+        });
+
+        // Focus — mostrar dropdown se há termo
+        $input.on('focus', function() {
+            if ($(this).val().trim().length > 0) {
+                abrirDropdown();
+                renderizarCategorias($(this).val().trim());
+            }
+        });
+
+        // Fechar ao clicar fora
+        $(document).on('mousedown', function(e) {
+            if (!$(e.target).closest('#lkSearchWrapper').length) {
+                fecharDropdown();
+            }
+        });
+
+        // Clear button
+        $clear.on('click', function() {
+            $input.val('').trigger('focus');
+            fecharDropdown();
+            $clear.hide();
+        });
+
+        // Clique numa categoria do dropdown
+        $catList.on('click', '.lk-sd-item', function() {
+            const catId = $(this).data('cat-id');
+            const catSlug = $(this).data('cat-slug');
+            const catNome = $(this).find('.lk-sd-item-name').text();
+            $input.val(catNome);
+            fecharDropdown();
+            window.filtrarPorCategoria(catId);
+        });
+
+        // Clique num produto do dropdown
+        $prodList.on('click', '.lk-sd-item', function() {
+            const prodId = $(this).data('prod-id');
+            fecharDropdown();
+            window.abrirDetalhes(prodId);
+        });
+
+        // Navegação por teclado
+        $input.on('keydown', function(e) {
+            const $items = $dropdown.find('.lk-sd-item:visible');
+            if (!$items.length) {
+                if (e.key === 'Enter') { e.preventDefault(); window.executarPesquisa(); }
+                return;
+            }
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeIndex = Math.min(activeIndex + 1, $items.length - 1);
+                $items.removeClass('ativo').eq(activeIndex).addClass('ativo');
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeIndex = Math.max(activeIndex - 1, 0);
+                $items.removeClass('ativo').eq(activeIndex).addClass('ativo');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (activeIndex >= 0 && activeIndex < $items.length) {
+                    $items.eq(activeIndex).trigger('click');
+                } else {
+                    window.executarPesquisa();
+                    fecharDropdown();
+                }
+            } else if (e.key === 'Escape') {
+                fecharDropdown();
+                $input.blur();
+            }
+        });
+
+        // Carregar categorias no init
+        carregarCategorias();
+    })();
 
     // ── Home: Produtos (Novo Layout) ──
     function gerarSkeletonLk(q = 4) {

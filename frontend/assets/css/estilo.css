@@ -6055,6 +6055,31 @@ body.feed-active .lk-bottom-nav { display: none !important; }
 /* ─── Bento Video ─── */
 .lk-bento-video { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; cursor: pointer; }
 
+/* ─── Live Search Dropdown ─── */
+.lk-search-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: var(--surface-container-lowest); border: 1.5px solid var(--outline-variant); border-radius: 14px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); z-index: 1000; max-height: 420px; overflow-y: auto; }
+.lk-search-dropdown.ativo { display: block; }
+.lk-sd-section { padding: 8px 0; }
+.lk-sd-section + .lk-sd-section { border-top: 1px solid var(--outline-variant); }
+.lk-sd-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--on-surface-variant); padding: 4px 14px 6px; }
+.lk-sd-list { display: flex; flex-direction: column; }
+.lk-sd-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px; cursor: pointer; transition: background 0.15s; font-size: 0.85rem; color: var(--on-surface); }
+.lk-sd-item:hover, .lk-sd-item.ativo { background: var(--surface-container); }
+.lk-sd-item-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: var(--surface-container-high); flex-shrink: 0; }
+.lk-sd-item-icon .material-symbols-outlined { font-size: 20px; color: var(--on-surface-variant); }
+.lk-sd-item-img { width: 36px; height: 36px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+.lk-sd-item-info { flex: 1; min-width: 0; }
+.lk-sd-item-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lk-sd-item-meta { font-size: 0.75rem; color: var(--on-surface-variant); }
+.lk-sd-item-price { font-weight: 600; font-size: 0.85rem; color: var(--primary); white-space: nowrap; }
+.lk-sd-footer { padding: 8px 14px; border-top: 1px solid var(--outline-variant); text-align: center; }
+.lk-sd-footer button { background: none; border: none; color: var(--primary); font-weight: 600; font-size: 0.82rem; cursor: pointer; padding: 4px; }
+.lk-sd-footer button:hover { text-decoration: underline; }
+.lk-search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--outline); }
+.lk-search-with-btn { position: relative; }
+@media (max-width: 480px) {
+    .lk-search-dropdown { max-height: 60vh; }
+}
+
 /* ─── Confirmação ─── */
 .lk-confirm-text {
     font-size: 0.92rem;
