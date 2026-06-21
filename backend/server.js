@@ -16,6 +16,8 @@ const { configurarRedis: configurarCacheRedis } = require('./src/config/cache');
 const { logger } = require('./src/config/logger');
 const httpLogger = require('./src/middlewares/http-logger.middleware');
 const inicializarSockets = require('./src/sockets');
+const swaggerSpec = require('./src/config/swagger');
+const swaggerUi = require('swagger-ui-express');
 
 // Configuração de CORS Dinâmica
 const corsOptions = {
@@ -131,6 +133,13 @@ app.use('/api/carrinho', require('./src/routes/carrinho.routes'));
 app.use('/api/preferencias', require('./src/routes/preferencia.routes'));
 app.use('/api/entregas', require('./src/routes/entrega.routes'));
 app.use('/api/push', require('./src/routes/push.routes'));
+
+// Swagger API Docs
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'Linka API Docs',
+  customCss: '.swagger-ui .topbar { display: none }'
+}));
+app.get('/api/docs/json', (req, res) => { res.json(swaggerSpec); });
 
 // Health check
 app.get('/api/saude', (req, res) => {
