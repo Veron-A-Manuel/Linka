@@ -715,6 +715,7 @@
     let lkExploreCarregando = false;
     let lkExploreHaMais = true;
     let lkTendenciasHeader = [];
+    let lkFiltros = { preco_min: '', preco_max: '', cidade: '', ordem: 'recente' };
 
     async function carregarExploreFeed(reset = true) {
         const grid = get('lkMasonryGrid');
@@ -730,6 +731,11 @@
 
         try {
             const params = new URLSearchParams({ pagina: lkExplorePagina, limite: 12 });
+
+            if (lkFiltros.preco_min) params.set('preco_min', lkFiltros.preco_min);
+            if (lkFiltros.preco_max) params.set('preco_max', lkFiltros.preco_max);
+            if (lkFiltros.cidade) params.set('cidade', lkFiltros.cidade);
+            if (lkFiltros.ordem && lkFiltros.ordem !== 'recente') params.set('ordem', lkFiltros.ordem);
 
             if (lkFeedTermoBusca) {
                 params.set('busca', lkFeedTermoBusca);
@@ -835,6 +841,59 @@
         carregarExploreFeed(true);
     }
     window.filtrarExploreFeed = filtrarExploreFeed;
+
+    window._abrirFiltros = function() {
+        const modal = criarModal({
+            id: 'modalFiltros',
+            titulo: 'Filtros de Busca',
+            tamanho: 'small',
+            conteudo: `
+                <div class="lk-flt-form">
+                    <div class="lk-flt-field">
+                        <label>Ordenar por</label>
+                        <select id="lkFltOrdem" class="lk-flt-select">
+                            <option value="recente" ${lkFiltros.ordem === 'recente' ? 'selected' : ''}>Mais recentes</option>
+                            <option value="barato" ${lkFiltros.ordem === 'barato' ? 'selected' : ''}>Menor preço</option>
+                            <option value="caro" ${lkFiltros.ordem === 'caro' ? 'selected' : ''}>Maior preço</option>
+                            <option value="popular" ${lkFiltros.ordem === 'popular' ? 'selected' : ''}>Mais populares</option>
+                        </select>
+                    </div>
+                    <div class="lk-flt-field">
+                        <label>Faixa de preço (MZN)</label>
+                        <div class="lk-flt-row">
+                            <input type="number" id="lkFltPrecoMin" placeholder="Mín" value="${lkFiltros.preco_min}" min="0">
+                            <span class="lk-flt-sep">—</span>
+                            <input type="number" id="lkFltPrecoMax" placeholder="Máx" value="${lkFiltros.preco_max}" min="0">
+                        </div>
+                    </div>
+                    <div class="lk-flt-field">
+                        <label>Cidade</label>
+                        <input type="text" id="lkFltCidade" placeholder="Ex: Maputo, Beira..." value="${lkFiltros.cidade}">
+                    </div>
+                </div>`,
+            rodape: `
+                <button class="btn btn-outline" id="lkFltLimpar">Limpar</button>
+                <button class="btn btn-primario" id="lkFltAplicar">Aplicar Filtros</button>`
+        });
+
+        const modalEl = modal.overlay;
+
+        modalEl.querySelector('#lkFltLimpar').addEventListener('click', () => {
+            lkFiltros = { preco_min: '', preco_max: '', cidade: '', ordem: 'recente' };
+            modal.fechar();
+            carregarExploreFeed(true);
+        });
+
+        modalEl.querySelector('#lkFltAplicar').addEventListener('click', () => {
+            lkFiltros.ordem = modalEl.querySelector('#lkFltOrdem').value;
+            lkFiltros.preco_min = modalEl.querySelector('#lkFltPrecoMin').value;
+            lkFiltros.preco_max = modalEl.querySelector('#lkFltPrecoMax').value;
+            lkFiltros.cidade = modalEl.querySelector('#lkFltCidade').value.trim();
+            lkFeedFiltro = 'all';
+            modal.fechar();
+            carregarExploreFeed(true);
+        });
+    };
 
     function irParaHomeCliente() {
         empurrarNavegacao({ secao: 'inicio', tab: 'inicio', scrollY: 0 });
