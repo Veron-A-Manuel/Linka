@@ -2078,26 +2078,130 @@
             const itens = (await window.api.carrinho.listar()).dados || [];
             if (itens.length === 0) { window.notificar('Carrinho vazio.', 'info'); return; }
 
-            // Criar pedidos para cada vendedor
             const porVendedor = {};
             itens.forEach(i => {
                 if (!porVendedor[i.vendedor_id]) porVendedor[i.vendedor_id] = [];
                 porVendedor[i.vendedor_id].push(i);
             });
 
-            let criados = 0;
-            for (const [vendedorId, items] of Object.entries(porVendedor)) {
-                await window.api.pedidos.criar({
-                    vendedor_id: parseInt(vendedorId),
-                    itens: items.map(i => ({ produto_id: i.produto_id, quantidade: i.quantidade, preco_unitario: i.preco }))
-                });
-                criados++;
-            }
+            let subtotal = 0;
+            itens.forEach(i => { subtotal += parseFloat(i.preco) * i.quantidade; });
+            const taxaEntrega = 150;
+            const total = subtotal + taxaEntrega;
 
-            await window.api.carrinho.limpar();
-            window.notificar(`${criados} pedido(s) criado(s)!`, 'sucesso');
-            window.carregarConteudoDashboard('compras');
-        } catch (e) { window.notificar(e.message || 'Erro ao finalizar', 'erro'); }
+            const itensHtml = itens.map(i => `
+                <div class="lk-co-item">
+                    <div class="lk-co-item-img">${i.imagem_url ? `<img src="${resolverUrlImagem(i.imagem_url)}" alt="">` : `<span class="material-symbols-outlined">image</span>`}</div>
+                    <div class="lk-co-item-info">
+                        <span class="lk-co-item-title">${escaparHtml(i.titulo)}</span>
+                        <span class="lk-co-item-meta">${i.quantidade}x ${formatarMoeda(i.preco)}</span>
+                    </div>
+                    <span class="lk-co-item-sub">${formatarMoeda(i.preco * i.quantidade)}</span>
+                </div>`).join('');
+
+            const vendedoresCount = Object.keys(porVendedor).length;
+
+            const modal = criarModal({
+                id: 'modalCheckout',
+                titulo: 'Finalizar Compra',
+                tamanho: 'medium',
+                conteudo: `
+                    <div class="lk-co-resumo">
+                        <div class="lk-co-items">${itensHtml}</div>
+                        <div class="lk-co-totals">
+                            <div class="lk-co-row"><span>Subtotal (${itens.length} itens)</span><span>${formatarMoeda(subtotal)}</span></div>
+                            <div class="lk-co-row"><span>Taxa de entrega</span><span>${formatarMoeda(taxaEntrega)}</span></div>
+                            ${vendedoresCount > 1 ? `<div class="lk-co-row lk-co-info"><span class="material-symbols-outlined" style="font-size:14px">info</span><span>${vendedoresCount} vendedores — pedidos separados</span></div>` : ''}
+                            <div class="lk-co-row lk-co-total"><span>Total</span><span>${formatarMoeda(total)}</span></div>
+                        </div>
+                    </div>
+                    <div class="lk-co-form">
+                        <div class="lk-co-field">
+                            <label>Endereço de entrega *</label>
+                            <input type="text" id="lkCoEndereco" placeholder="Ex: Rua 1, Bairro, Cidade" value="">
+                        </div>
+                        <div class="lk-co-field">
+                            <label>Método de pagamento</label>
+                            <div class="lk-co-pagamento">
+                                <label class="lk-co-pag-opt ativo" data-pag="dinheiro">
+                                    <span class="material-symbols-outlined">payments</span>
+                                    <span>Dinheiro</span>
+                                </label>
+                                <label class="lk-co-pag-opt" data-pag="mpesa">
+                                    <span class="material-symbols-outlined">phone_iphone</span>
+                                    <span>M-Pesa</span>
+                                </label>
+                                <label class="lk-co-pag-opt" data-pag="emola">
+                                    <span class="material-symbols-outlined">smartphone</span>
+                                    <span>e-Mola</span>
+                                </label>
+                                <label class="lk-co-pag-opt" data-pag="transferencia">
+                                    <span class="material-symbols-outlined">account_balance</span>
+                                    <span>Transferência</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="lk-co-field">
+                            <label>Notas (opcional)</label>
+                            <textarea id="lkCoNotas" placeholder="Instruções especiais de entrega..." rows="2"></textarea>
+                        </div>
+                    </div>`,
+                rodape: `
+                    <button class="btn btn-outline" data-modal-close>Cancelar</button>
+                    <button class="btn btn-primario" id="lkCoConfirmar" style="display:flex;align-items:center;gap:8px;">
+                        <span class="material-symbols-outlined" style="font-size:18px">check_circle</span>
+                        Confirmar Pedido
+                    </button>`
+            });
+
+            const modalEl = modal.overlay;
+
+            modalEl.querySelectorAll('.lk-co-pag-opt').forEach(opt => {
+                opt.addEventListener('click', () => {
+                    modalEl.querySelectorAll('.lk-co-pag-opt').forEach(o => o.classList.remove('ativo'));
+                    opt.classList.add('ativo');
+                });
+            });
+
+            const btnConfirmar = modalEl.querySelector('#lkCoConfirmar');
+            btnConfirmar.addEventListener('click', async () => {
+                const endereco = modalEl.querySelector('#lkCoEndereco').value.trim();
+                if (!endereco) {
+                    window.notificar('Informe o endereço de entrega.', 'aviso');
+                    modalEl.querySelector('#lkCoEndereco').focus();
+                    return;
+                }
+
+                const metodo = modalEl.querySelector('.lk-co-pag-opt.ativo')?.dataset.pag || 'dinheiro';
+                const notas = modalEl.querySelector('#lkCoNotas').value.trim();
+
+                btnConfirmar.disabled = true;
+                btnConfirmar.innerHTML = '<span class="spinner-linka" style="width:18px;height:18px;border-width:2px;"></span> A processar...';
+
+                try {
+                    let criados = 0;
+                    for (const [vendedorId, items] of Object.entries(porVendedor)) {
+                        await window.api.pedidos.criar({
+                            itens: items.map(i => ({ produto_id: i.produto_id, quantidade: i.quantidade })),
+                            metodo_pagamento: metodo,
+                            endereco_entrega: endereco,
+                            notas: notas || undefined
+                        });
+                        criados++;
+                    }
+
+                    await window.api.carrinho.limpar();
+                    modal.fechar();
+                    window.notificar(`${criados} pedido(s) criado(s) com sucesso!`, 'sucesso');
+                    window.carregarConteudoDashboard('compras');
+                } catch (e) {
+                    btnConfirmar.disabled = false;
+                    btnConfirmar.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">check_circle</span> Confirmar Pedido';
+                    window.notificar(e.message || 'Erro ao finalizar', 'erro');
+                }
+            });
+
+        } catch (e) { window.notificar(e.message || 'Erro ao carregar carrinho', 'erro'); }
     };
 
     // ── Preferências do Utilizador ──
