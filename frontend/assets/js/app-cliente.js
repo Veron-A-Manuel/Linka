@@ -822,7 +822,12 @@
             const cat = p.categoria_nome || p.categoria || '';
             const delay = Math.min(i * 0.06, 0.4);
             const preco = p.preco ? `MZN ${formatarDinheiro(p.preco)}` : '';
-            let inner = `<img src="${img}" alt="${escaparHtml(p.titulo)}" loading="lazy">`;
+            let inner = '';
+            if (p.video_url) {
+                inner = `<video src="${escaparHtml(p.video_url)}" muted loop playsinline preload="metadata" class="lk-bento-video" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0;" onclick="event.stopPropagation(); window.abrirDetalhes(${p.id})"></video>`;
+            } else {
+                inner = `<img src="${img}" alt="${escaparHtml(p.titulo)}" loading="lazy">`;
+            }
             if (bt === 'large') {
                 inner += `<div class="lk-bento-badge">SPONSORED</div>`;
                 inner += `<div class="lk-bento-price">${preco}</div>`;

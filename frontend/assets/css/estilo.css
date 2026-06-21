@@ -6052,6 +6052,9 @@ body.feed-active .lk-bottom-nav { display: none !important; }
 .lk-flt-row input:focus { border-color: var(--primary); }
 .lk-flt-sep { color: var(--outline); font-weight: 500; }
 
+/* ─── Bento Video ─── */
+.lk-bento-video { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; cursor: pointer; }
+
 /* ─── Confirmação ─── */
 .lk-confirm-text {
     font-size: 0.92rem;

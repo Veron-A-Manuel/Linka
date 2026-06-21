@@ -144,7 +144,7 @@
                     <div class="kh-section-header" style="margin-bottom:20px;"><span class="kh-section-title">Novo Anúncio</span></div>
                     <form id="formNovoAnuncio">
                         <div class="kh-form-section"><div class="kh-form-section-title"><span class="material-symbols-outlined">photo_camera</span> Fotografias</div>
-                            <div class="kh-upload-area" onclick="document.getElementById('inputImagens').click()"><input type="file" id="inputImagens" name="imagens" multiple accept="image/*" hidden><div class="kh-upload-icon"><span class="material-symbols-outlined">photo_camera</span></div><p class="kh-upload-title">Adicionar Fotos</p><p class="kh-upload-sub">Até 5 fotos · JPG, PNG (Máx. 5MB)</p></div>
+                            <div class="kh-upload-area" onclick="document.getElementById('inputImagens').click()"><input type="file" id="inputImagens" name="imagens" multiple accept="image/*,video/mp4,video/webm" hidden><div class="kh-upload-icon"><span class="material-symbols-outlined">photo_camera</span></div><p class="kh-upload-title">Adicionar Fotos ou Vídeo</p><p class="kh-upload-sub">Até 5 fotos (JPG, PNG) + 1 vídeo (MP4, WebM) · Máx. 5MB cada</p></div>
                             <div id="previsualizacaoImagens" class="kh-preview-grid"></div>
                         </div>
                         <div class="kh-form-section"><div class="kh-form-section-title"><span class="material-symbols-outlined">info</span> Informações Básicas</div>
@@ -796,7 +796,7 @@
                 <div class="kh-section-header" style="margin-bottom:20px;"><span class="kh-section-title">Editar Anúncio</span></div>
                 <form id="formEditarAnuncio">
                     <div class="kh-form-section"><div class="kh-form-section-title"><span class="material-symbols-outlined">photo_camera</span> Fotografias</div>
-                    <div class="kh-upload-area" onclick="document.getElementById('inputImagensEdit').click()"><input type="file" id="inputImagensEdit" name="imagens" multiple accept="image/*" hidden><div class="kh-upload-icon"><span class="material-symbols-outlined">photo_camera</span></div><p class="kh-upload-title">Alterar Fotos</p><p class="kh-upload-sub">Até 5 fotos</p></div>
+                            <div class="kh-upload-area" onclick="document.getElementById('inputImagensEdit').click()"><input type="file" id="inputImagensEdit" name="imagens" multiple accept="image/*,video/mp4,video/webm" hidden><div class="kh-upload-icon"><span class="material-symbols-outlined">photo_camera</span></div><p class="kh-upload-title">Alterar Fotos ou Vídeo</p><p class="kh-upload-sub">Até 5 fotos + 1 vídeo</p></div>
                     ${p.imagens && p.imagens.length > 0 ? `<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">${p.imagens.map(im => `<div style="width:60px;height:60px;border-radius:8px;background:${cssUrlImagem(im.caminho)} center/cover;border:2px solid #e5e7eb;"></div>`).join('')}</div>` : ''}
                 </div>
                 <div class="kh-form-section"><div class="kh-form-section-title"><span class="material-symbols-outlined">info</span> Informações</div>
@@ -899,21 +899,35 @@
             const container = get('previsualizacaoImagens');
             if (!container) return;
             container.innerHTML = '';
-            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'];
             const maxTamanho = 50 * 1024 * 1024;
-            const ficheiros = Array.from(e.target.files).slice(0, 5);
+            const ficheiros = Array.from(e.target.files).slice(0, 6);
             const validos = [];
+            let temVideo = false;
             for (const file of ficheiros) {
-                if (!tiposPermitidos.includes(file.type)) { notificar(`"${file.name}" não é uma imagem válida.`, 'aviso'); continue; }
+                const isVideo = file.type.startsWith('video/');
+                if (!tiposPermitidos.includes(file.type)) { notificar(`"${file.name}" não é um formato válido.`, 'aviso'); continue; }
                 if (file.size > maxTamanho) { notificar(`"${file.name}" excede 50MB.`, 'aviso'); continue; }
+                if (isVideo && temVideo) { notificar('Apenas 1 vídeo por anúncio.', 'aviso'); continue; }
+                if (isVideo) temVideo = true;
                 validos.push(file);
             }
             if (validos.length < ficheiros.length) {
                 const dt = new DataTransfer(); validos.forEach(f => dt.items.add(f)); e.target.files = dt.files;
             }
             validos.forEach(file => {
+                const isVideo = file.type.startsWith('video/');
                 const reader = new FileReader();
-                reader.onload = (ev) => { const div = document.createElement('div'); div.className = 'preview-item'; div.innerHTML = `<img src="${ev.target.result}">`; container.appendChild(div); };
+                reader.onload = (ev) => {
+                    const div = document.createElement('div');
+                    div.className = 'preview-item';
+                    if (isVideo) {
+                        div.innerHTML = `<video src="${ev.target.result}" muted style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></video>`;
+                    } else {
+                        div.innerHTML = `<img src="${ev.target.result}">`;
+                    }
+                    container.appendChild(div);
+                };
                 reader.readAsDataURL(file);
             });
         }
