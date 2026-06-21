@@ -178,6 +178,7 @@ h3 {
 .hero-titulo {
     font-size: 3.5rem;
     margin-bottom: 20px;
+    animation: lkFadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
 
 .hero-destaque {
@@ -189,6 +190,11 @@ h3 {
     max-width: 600px;
     color: #555;
     margin-bottom: 30px;
+    animation: lkFadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.hero-botoes {
+    animation: lkFadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
 }
 
 /* Seção: Produtos */
@@ -257,14 +263,26 @@ h3 {
     padding: 36px;
     border-radius: 24px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-    transform: translateY(20px) scale(0.96);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(30px) scale(0.9);
+    opacity: 0;
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .modal-overlay.active .modal-container {
     transform: translateY(0) scale(1);
+    opacity: 1;
 }
+
+/* Filhos do modal com stagger */
+.modal-container > * {
+    animation: lkFadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.modal-container > *:nth-child(1) { animation-delay: 0.05s; }
+.modal-container > *:nth-child(2) { animation-delay: 0.1s; }
+.modal-container > *:nth-child(3) { animation-delay: 0.15s; }
+.modal-container > *:nth-child(4) { animation-delay: 0.2s; }
+.modal-container > *:nth-child(5) { animation-delay: 0.25s; }
 
 /* Botões (Stitch — Material Design 3) */
 .btn {
@@ -671,8 +689,8 @@ h3 {
     border-radius: 14px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     z-index: 2000;
-    transition: opacity 0.3s ease;
-    animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    animation: lkBounceIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     border-left: 4px solid var(--primary);
     font-size: 0.88rem;
     font-weight: 500;
@@ -1442,20 +1460,23 @@ h3 {
     overflow: hidden;
 }
 
-.modal-detalhes-conteudo > div > .dm-gallery {
-    flex-shrink: 0;
-}
-
 .modal-detalhes-conteudo > div > .dm-body {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
+    animation: lkFadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.modal-detalhes-conteudo > div > .dm-gallery {
+    flex-shrink: 0;
+    animation: lkScaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
 }
 
 .modal-detalhes-conteudo > div > .dm-bottom-bar {
     flex-shrink: 0;
+    animation: lkFadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
 }
 
 .modal-detalhes-conteudo .btn-fechar-modal {
@@ -2215,7 +2236,16 @@ body {
     gap: 10px;
     cursor: pointer;
     transition: all 0.2s ease;
+    animation: lkStagger 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.categorias-grid-app .cat-card-app:nth-child(1) { animation-delay: 0.05s; }
+.categorias-grid-app .cat-card-app:nth-child(2) { animation-delay: 0.1s; }
+.categorias-grid-app .cat-card-app:nth-child(3) { animation-delay: 0.15s; }
+.categorias-grid-app .cat-card-app:nth-child(4) { animation-delay: 0.2s; }
+.categorias-grid-app .cat-card-app:nth-child(5) { animation-delay: 0.25s; }
+.categorias-grid-app .cat-card-app:nth-child(6) { animation-delay: 0.3s; }
+.categorias-grid-app .cat-card-app:nth-child(7) { animation-delay: 0.35s; }
+.categorias-grid-app .cat-card-app:nth-child(8) { animation-delay: 0.4s; }
 
 .cat-card-app:active {
     background: var(--surface-container-low);
@@ -3804,7 +3834,16 @@ body {
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     position: relative;
+    animation: lkFadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.lk-products-grid .lk-product-card:nth-child(1) { animation-delay: 0.03s; }
+.lk-products-grid .lk-product-card:nth-child(2) { animation-delay: 0.06s; }
+.lk-products-grid .lk-product-card:nth-child(3) { animation-delay: 0.09s; }
+.lk-products-grid .lk-product-card:nth-child(4) { animation-delay: 0.12s; }
+.lk-products-grid .lk-product-card:nth-child(5) { animation-delay: 0.15s; }
+.lk-products-grid .lk-product-card:nth-child(6) { animation-delay: 0.18s; }
+.lk-products-grid .lk-product-card:nth-child(7) { animation-delay: 0.21s; }
+.lk-products-grid .lk-product-card:nth-child(8) { animation-delay: 0.24s; }
 
 .lk-product-card:active {
     transform: scale(0.97);
@@ -5913,7 +5952,7 @@ body.feed-active .lk-bottom-nav { display: none !important; }
     padding: 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease;
+    transition: opacity 0.3s ease;
 }
 
 .lk-modal-overlay.ativo {
@@ -5929,8 +5968,9 @@ body.feed-active .lk-bottom-nav { display: none !important; }
     max-height: 90vh;
     display: flex;
     flex-direction: column;
-    transform: scale(0.92) translateY(20px);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.88) translateY(30px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -5938,7 +5978,13 @@ body.feed-active .lk-bottom-nav { display: none !important; }
 
 .lk-modal-overlay.ativo .lk-modal {
     transform: scale(1) translateY(0);
+    opacity: 1;
 }
+
+/* Filhos do lk-modal com stagger */
+.lk-modal-header { animation: lkFadeInDown 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+.lk-modal-body { animation: lkFadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.lk-modal-footer { animation: lkFadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
 
 .lk-modal.small { max-width: 400px; }
 .lk-modal.medium { max-width: 560px; }
@@ -6028,6 +6074,10 @@ body.feed-active .lk-bottom-nav { display: none !important; }
 .lk-co-row.lk-co-info { font-size: 0.78rem; gap: 4px; color: var(--outline); }
 .lk-co-row.lk-co-total { font-size: 1rem; font-weight: 700; color: var(--on-surface); border-top: 2px solid var(--primary); margin-top: 8px; padding-top: 8px; }
 .lk-co-form { margin-top: 16px; display: flex; flex-direction: column; gap: 14px; }
+.lk-co-field { animation: lkFadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.lk-co-field:nth-child(1) { animation-delay: 0.05s; }
+.lk-co-field:nth-child(2) { animation-delay: 0.1s; }
+.lk-co-field:nth-child(3) { animation-delay: 0.15s; }
 .lk-co-field label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--on-surface); margin-bottom: 6px; }
 .lk-co-field input, .lk-co-field textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--outline-variant); border-radius: 10px; font-size: 0.88rem; font-family: var(--fonte-principal); background: var(--surface-container-lowest); color: var(--on-surface); outline: none; transition: border-color 0.2s; box-sizing: border-box; }
 .lk-co-field input:focus, .lk-co-field textarea:focus { border-color: var(--primary); }
@@ -6571,11 +6621,73 @@ select.lk-campo-input {
     outline-offset: 2px;
 }
 
-/* ─── Animações ─── */
+/* ─── Animações de Entrada ─── */
 @keyframes lkFadeInUp {
     from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
 }
+@keyframes lkFadeInDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes lkScaleIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+@keyframes lkSlideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes lkSlideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes lkBounceIn {
+    0% { opacity: 0; transform: scale(0.85); }
+    60% { opacity: 1; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lkFlipIn {
+    from { opacity: 0; transform: perspective(600px) rotateX(-15deg); }
+    to { opacity: 1; transform: perspective(600px) rotateX(0); }
+}
+@keyframes lkShakeIn {
+    0% { opacity: 0; transform: translateX(-8px); }
+    25% { transform: translateX(6px); }
+    50% { transform: translateX(-4px); }
+    75% { transform: translateX(2px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes lkPopIn {
+    0% { opacity: 0; transform: scale(0.6); }
+    70% { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+}
+@keyframes lkStagger {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Classes utilitárias de animação */
+.anim-fade-in-up { animation: lkFadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-fade-in-down { animation: lkFadeInDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-scale-in { animation: lkScaleIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-slide-right { animation: lkSlideInRight 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-slide-left { animation: lkSlideInLeft 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-bounce-in { animation: lkBounceIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-flip-in { animation: lkFlipIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-shake-in { animation: lkShakeIn 0.4s ease both; }
+.anim-pop-in { animation: lkPopIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Delay helpers */
+.anim-delay-1 { animation-delay: 0.05s; }
+.anim-delay-2 { animation-delay: 0.1s; }
+.anim-delay-3 { animation-delay: 0.15s; }
+.anim-delay-4 { animation-delay: 0.2s; }
+.anim-delay-5 { animation-delay: 0.25s; }
+.anim-delay-6 { animation-delay: 0.3s; }
+.anim-delay-7 { animation-delay: 0.35s; }
+.anim-delay-8 { animation-delay: 0.4s; }
 
 @keyframes lkFadeIn {
     from { opacity: 0; }
